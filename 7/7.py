@@ -63,17 +63,21 @@ def compute_size(ptr):
 compute_size(fs)
 print_fs(fs)
 
-30000000
-smallest = 70000000
-smallest_dir = ""
+small = {
+    "size": 70000000,
+    "dir": ""
+}
+required_size = 30000000 - (70000000 - fs["size"])
 
-def visit(ptr, s=0):
+def visit(ptr):
     if "contents" in ptr:
-        if ptr["size"] <= 100000:
-            return ptr["size"] + sum(visit(c) for c in ptr["contents"].values())
-        else:
-            return sum(visit(c) for c in ptr["contents"].values())
+        if ptr["size"] >= required_size and ptr["size"] < small["size"]:
+            small["size"] = ptr["size"]
+            small["dir"] = ptr["name"]
+        for c in ptr["contents"].values():
+            visit(c)
     else:
-        return 0
+        return float("infinity")
 
-print(visit(fs))
+visit(fs)
+print(small)
