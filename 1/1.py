@@ -13,4 +13,4 @@ for l in lines:
 
 elves = [sum(e) for e in elves]
 
-print(max(elves))
+print(sum(sorted(elves)[-3:]))
