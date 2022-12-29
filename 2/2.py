@@ -3,28 +3,35 @@ with open("input", "r") as f:
 
 
 def shape_score(shape):
-    if shape == "X":
+    if shape == "A":
         return 1
-    if shape == "Y":
+    if shape == "B":
         return 2
-    if shape == "Z":
+    if shape == "C":
         return 3
 
-draws = { ("A", "X"), ("B", "Y"), ("C", "Z") }
-wins = { ("A", "Y"), ("B", "Z"), ("C", "X") }
+draws = { 
+    "A": "A",
+    "B": "B",
+    "C": "C"
+}
 
-def round_score(opponent, me):
-    if (opponent, me) in draws:
-        return 3
-    if (opponent, me) in wins:
-        return 6
-    return 0
+wins = { "A": "B", "B": "C", "C": "A" }
+
+losses = { "A": "C", "B": "A", "C": "B" }
+
+def round_score(opponent, result):
+    if result == "X":
+        return 0 + shape_score(losses[opponent])
+    if result == "Y":
+        return 3 + shape_score(draws[opponent])
+    if result == "Z":
+        return 6 + shape_score(wins[opponent])
 
 score = 0
 
 for l in lines:
-    (opponent, me) = l.split()
-    score += shape_score(me)
-    score += round_score(opponent, me)
+    (opponent, result) = l.split()
+    score += round_score(opponent, result)
 
 print(score)
