@@ -1,46 +1,48 @@
 with open("input", "r") as f:
-    lines = [l.strip() for l in f.readlines()]
+    trees = [[int(c) for c in l.strip()] for l in f.readlines()]
 
-visible = [[False for c in l] for l in lines]
+print(trees)
 
-trees = lines
+def compute_scenery(y, x):
+    height = trees[y][x]
+    left = 0
+    right = 0
+    up = 0
+    down = 0
 
-for i, l in enumerate(trees):
-    tallest = -1
-    for j, c in enumerate(l):
-        if int(c) > tallest:
-            visible[i][j] = True
-            tallest = int(c)
+    # left
+    i = x-1
+    while i >= 0:
+        left += 1
+        if (trees[y][i]) >= height:
+            break
+        i -= 1
+        
+    # right
+    i = x+1
+    while i < len(trees[0]):
+        right += 1
+        if (trees[y][i]) >= height:
+            break
+        i += 1
 
-for i in list(range(len(trees)))[::-1]:
-    l = trees[i]
-    tallest = -1
-    for j in list(range(len(l)))[::-1]:
-        c = int(l[j])
-        if c > tallest:
-            visible[i][j] = True
-            tallest = int(c)
+    # up
+    i = y-1
+    while i >= 0:
+        up += 1
+        if (trees[i][x]) >= height:
+            break
+        i -= 1
 
-for j in list(range(len(trees[0]))):
-    tallest = -1
-    for i in list(range(len(trees))):
-        c = int(trees[i][j])
-        if c > tallest:
-            visible[i][j] = True
-            tallest = int(c)
+    # down
+    i = y+1
+    while i < len(trees):
+        down += 1
+        if (trees[i][x]) >= height:
+            break
+        i += 1
 
-for j in list(range(len(trees[0])))[::-1]:
-    tallest = -1
-    for i in list(range(len(trees)))[::-1]:
-        c = int(trees[i][j])
-        if c > tallest:
-            visible[i][j] = True
-            tallest = int(c)
+    return left * right * up * down
 
-total = 0
-for l in visible:
-    for v in l:
-        if v:
-            total +=1
-
-print(total)
+print(max(compute_scenery(i, j) for i in range(len(trees)) for j in range(len(trees[0]))))
+# print(compute_scenery(3, 2))
