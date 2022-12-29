@@ -19,8 +19,6 @@ with open("input", "r") as f:
     f.readline()
     instructions = [l.strip() for l in f.readlines()]
 
-print(instructions)
-
 for i in instructions:
     s = i.split()
     repeats = int(s[1])
@@ -28,8 +26,9 @@ for i in instructions:
     t = int(s[5])
 
     # print(f"moving {repeats} from {f} to {t}")
+    holding = crates[f-1][-repeats:]
     for j in range(repeats):
-        c = crates[f-1].pop()
-        crates[t-1].append(c)
+        crates[f-1].pop()
+    crates[t-1].extend(holding)
 
 print("".join(s[-1] for s in crates))
