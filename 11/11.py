@@ -1,3 +1,4 @@
+from functools import *
 monkeys = []
 
 with open("input", "r") as f:
@@ -21,12 +22,13 @@ for rmdef in raw_monkey_defs:
     monkeys.append(monkey)
 
 activity = [0] * len(monkeys)
-for _ in range(20):
-    # print([m['items'] for m in monkeys])
+worry_mod = reduce(lambda a, b: a * b, [m["test"] for m in monkeys])
+for c in range(10000):
     for i, monkey in enumerate(monkeys):
         while monkey["items"]:
             item = monkey["items"].pop(0)
-            item = eval(monkey["operation"].replace("old", str(item))) // 3
+            item = eval(monkey["operation"].replace("old", str(item)))
+            item = item % worry_mod
             activity[i] += 1
             if item % monkey["test"] == 0: 
                 target = monkey["targets"][0]
