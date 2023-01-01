@@ -7,13 +7,15 @@ total_strength = 0
 x = 1
 i = 0
 v = 0
+image = ['.'] * 40 * 6
 
 while i < len(lines) or state != "READY":
-    print(f"cycle {cycle} x {x}")
-    if ((cycle - 20) % 40) == 0:
-        print(f"ADDING cycle {cycle} x {x}")
-        total_strength += (cycle) * x
+    # print(f"cycle {cycle} x {x}")
+    if abs(((cycle-1) % 40) - x) <= 1:
+        print("drawing")
+        image[cycle-1] = "#"
     cycle += 1
+
     if state == "READY":
         line = lines[i].split()
         cmd = line.pop(0)
@@ -24,6 +26,7 @@ while i < len(lines) or state != "READY":
     elif state == "ADDING":
         x += v
         state = "READY"
-print(f"cycle {cycle} x {x}")
-    
-print(total_strength)
+
+
+for i in range(6):
+    print("".join(image[i*40:(i+1)*40]))
