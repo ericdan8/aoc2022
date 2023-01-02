@@ -17,7 +17,7 @@ def height(x, y):
         return 25
     return ord(c) - 97
 
-q = [(s_x, s_y)]
+q = [(e_x, e_y)]
 
 def get_best(x, y):
     if (x, y) not in best:
@@ -31,30 +31,33 @@ while q:
     h = height(x, y)
     prevs = []
 
-    if y > 0 and h - height(x, y-1) <= 1:
+    if y > 0 and height(x, y-1) - h <= 1:
         prevs.append(get_best(x, y-1))
-    if y+1 < len(m) and h - height(x, y+1) <= 1:
+    if y+1 < len(m) and height(x, y+1) - h <= 1:
         prevs.append(get_best(x, y+1))
-    if x > 0 and h - height(x-1, y) <= 1:
+    if x > 0 and height(x-1, y) - h <= 1:
         prevs.append(get_best(x-1, y))
-    if x+1 < len(m[0]) and h - height(x+1, y) <= 1:
+    if x+1 < len(m[0]) and height(x+1, y) - h <= 1:
         prevs.append(get_best(x+1, y))
 
     # print(prevs)
-    new_best = min(prevs) + 1 if c != "S" else 0
+    new_best = min(prevs) + 1 if c != "E" else 0
     if new_best < prev_best:
         best[(x, y)] = new_best
-        if y > 0 and height(x, y-1) - h <= 1:
+        if y > 0 and h - height(x, y-1) <= 1:
             q.append((x, y-1))
-        if y+1 < len(m) and height(x, y+1) - h <= 1:
+        if y+1 < len(m) and h - height(x, y+1) <= 1:
             q.append((x, y+1))
-        if x > 0 and height(x-1, y) - h <= 1:
+        if x > 0 and h - height(x-1, y) <= 1:
             q.append((x-1, y))
-        if x+1 < len(m[0]) and height(x+1, y) - h <= 1:
+        if x+1 < len(m[0]) and h - height(x+1, y) <= 1:
             q.append((x+1, y))
 
 for j in range(len(m)):
     # print("".join([ f"({m[j][i]}, {best[(i,j)] if (i,j) in best else -1})" for i in range(len(m[0])) ]))
     print("".join([ "," + m[j][i] + "{:0>3}".format(best[(i,j)] if (i,j) in best else -1) for i in range(len(m[0])) ]))
 
-print(best[(e_x, e_y)])
+print(best[(s_x, s_y)])
+
+best_from_a = [ [v] for k, v in best.items() if m[k[1]][k[0]] in "Sa" ]
+print(min(best_from_a))
