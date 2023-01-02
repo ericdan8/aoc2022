@@ -38,40 +38,43 @@ sands = 0
 def drop_sand():
     s_x = 500
     s_y = 0
-    while s_y <= highest:
+    while True:
+        if s_y + 1 == highest + 2:
+            g[(s_x,s_y)] = "o"
+            break
         if (s_x, s_y+1) in g:
             if (s_x-1, s_y+1) in g:
                 if (s_x+1, s_y+1) in g:
                     g[(s_x,s_y)] = "o"
-                    return False
+                    break
                 else:
                     s_x += 1
             else:
                 s_x -= 1
         s_y += 1
-    return True
+    return (s_x, s_y) == (500, 0)
 
+def show():
+    for j in range(0, highest+4):
+        l = "{:0>3}".format(j)
+        for i in range(min_x-5,max_x+5):
+            if (i,j) in g:
+                l += g[(i,j)]
+            else:
+                # if i == 500:
+                #     l += "~"
+                # elif i % 10 == 0:
+                #     l += "|"
+                # elif i % 5 == 0:
+                #     l += "`"
+                # else:
+                l += "."
+        print(l)
 while True:
+    # print("dropping")
+    sands += 1
     if drop_sand():
         break
-    sands += 1
-
-
-for j in range(0, highest+1):
-    l = "{:0>3}".format(j)
-    for i in range(min_x-5,max_x+5):
-        if (i,j) in g:
-            l += g[(i,j)]
-        else:
-            if i == 500:
-                l += "~"
-            elif i % 10 == 0:
-                l += "|"
-            elif i % 5 == 0:
-                l += "`"
-            else:
-                l += "."
-
-    print(l)
+show()
     
 print(sands)
