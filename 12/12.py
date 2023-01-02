@@ -4,6 +4,8 @@ with open("input", "r") as f:
 blobm = "".join(rawl)
 s_x = blobm.index("S") % len(m[0])
 s_y = blobm.index("S") // len(m[0])
+e_x = blobm.index("E") % len(m[0])
+e_y = blobm.index("E") // len(m[0])
 
 best = {}
 
@@ -15,39 +17,44 @@ def height(x, y):
         return 25
     return ord(c) - 97
 
-def explore(x, y, indent = "", path = []):
-    print(f'{indent}exploring {(x, y)}')
-    if (x, y) in best:
-        return best[(x, y)]
+q = [(s_x, s_y)]
 
+def get_best(x, y):
+    if (x, y) not in best:
+        best[(x, y)] = float("infinity")
+    return best[(x, y)]
+
+while q:
+    [x, y] = q.pop(0)
+    prev_best = get_best(x, y)
     c = m[y][x]
     h = height(x, y)
-    if c == "E":
-        best[(x, y)] = 0
-        return 0
-    best[(x, y)] = float("infinity")
-    paths = []
-    if y > 0 and height(x, y-1) - h <= 1:
-        # print(f"{indent}{x,y}exploring up:")
-        paths.append(1 + explore(x, y-1, indent + "  ", path + [(x, y)]))
-    if y+1 < len(m) and height(x, y+1) - h <= 1:
-        # print(f"{indent}{x,y}exploring down:")
-        paths.append(1 + explore(x, y+1, indent + "  ", path + [(x, y)]))
-    if x > 0 and height(x-1, y) - h <= 1:
-        # print(f"{indent}{x,y}exploring left:")
-        paths.append(1 + explore(x-1, y, indent + "  ", path + [(x, y)]))
-    if x+1 < len(m[0]) and height(x+1, y) - h <= 1:
-        # print(f"{indent}{x,y}exploring right:")
-        paths.append(1 + explore(x+1, y, indent + "  ", path + [(x, y)]))
+    prevs = []
 
-    best[(x, y)] = min(paths) if paths else float("infinity")
-    # if c == "S":
-    #     print(path)
-    return min(paths) if paths else float("infinity")
-    
-print(s_x)
-print(s_y)
-print(explore(s_x, s_y))
+    if y > 0 and h - height(x, y-1) <= 1:
+        prevs.append(get_best(x, y-1))
+    if y+1 < len(m) and h - height(x, y+1) <= 1:
+        prevs.append(get_best(x, y+1))
+    if x > 0 and h - height(x-1, y) <= 1:
+        prevs.append(get_best(x-1, y))
+    if x+1 < len(m[0]) and h - height(x+1, y) <= 1:
+        prevs.append(get_best(x+1, y))
+
+    # print(prevs)
+    new_best = min(prevs) + 1 if c != "S" else 0
+    if new_best < prev_best:
+        best[(x, y)] = new_best
+        if y > 0 and height(x, y-1) - h <= 1:
+            q.append((x, y-1))
+        if y+1 < len(m) and height(x, y+1) - h <= 1:
+            q.append((x, y+1))
+        if x > 0 and height(x-1, y) - h <= 1:
+            q.append((x-1, y))
+        if x+1 < len(m[0]) and height(x+1, y) - h <= 1:
+            q.append((x+1, y))
+
 for j in range(len(m)):
     # print("".join([ f"({m[j][i]}, {best[(i,j)] if (i,j) in best else -1})" for i in range(len(m[0])) ]))
     print("".join([ "," + m[j][i] + "{:0>3}".format(best[(i,j)] if (i,j) in best else -1) for i in range(len(m[0])) ]))
+
+print(best[(e_x, e_y)])
