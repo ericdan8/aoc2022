@@ -1,9 +1,11 @@
 import json
+import functools
 
 with open("input", "r") as f:
     raw = f.read()
 
-pairs = [[json.loads(l) for l in c.split("\n")] for c in raw.split("\n\n")]
+packets = [json.loads(l) for l in raw.replace("\n\n", "\n").split("\n")]
+print(packets)
 idx_sum = 0
 
 def ordered(left, right):
@@ -15,15 +17,17 @@ def ordered(left, right):
         if left == right:
             return None
     elif type(left) == list and type(right) == list:
-        while left:
-            if not right:
+        i = 0
+        while i < len(left):
+            if i >= len(right):
                 return False
-            l = left.pop(0)
-            r = right.pop(0)
+            l = left[i]
+            r = right[i]
             result = ordered(l, r)
             if result is not None:
                 return result
-        if right:
+            i += 1
+        if i < len(right):
             return True
         else:
             return None
@@ -34,8 +38,11 @@ def ordered(left, right):
             right = [right]
         return ordered(left, right)
 
-for i, p in enumerate(pairs):
-    if ordered(p[0], p[1]):
-        idx_sum += i + 1
+packets += [[[2]], [[6]]]
+packets.sort(key=functools.cmp_to_key(lambda l, r: -1 if ordered(l,r) else 1))
 
-print(idx_sum)
+# for p in packets:
+#     print(p)
+
+
+print((packets.index([[2]]) + 1) * (packets.index([[6]]) + 1))
